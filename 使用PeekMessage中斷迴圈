@@ -1,0 +1,32 @@
+void CPumps_TestDlg::OnStartDraw()
+{
+    int Num = 999999;
+    int sum = 0;
+    m_bQuit = false;
+    for (int i = 0; i< Num && !m_bQuit; i++)
+    {
+        CString   TempString;
+        TempString.Format(_T("%d") , i);
+        m_LIST.AddString(TempString);
+        if (!PeekAndPump()) //這行沒加的話，整個程式資源都被迴圏佔住
+            break;
+
+    }
+}
+BOOL CPumps_TestDlg::PeekAndPump()
+{
+    MSG msg;
+    while (::PeekMessageA(&msg,NULL,0,0,PM_NOREMOVE)){
+        if(!AfxGetApp()->PumpMessage()){
+            ::PostQuitMessage(0);
+            return false;
+        }
+    }
+    LONG lIdle = 0;
+    while (AfxGetApp()->OnIdle(lIdle++));
+    return true;
+}
+void CPumps_TestDlg::OnStopDraw()
+{
+    m_bQuit = true;
+}
